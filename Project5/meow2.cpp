@@ -83,9 +83,14 @@ int main() {
     // Получаем ширину и высоту изображения
     int width = *(int*)&header[18];
     int height = *(int*)&header[22];
+    int offset = *(int*)&header[10];
+
     cout << "Image width: " << width << " bytes" << endl;
     cout << "Image height: " << height << " bytes" << endl;
+    cout << "Image offset: " << offset << " bytes" << endl;
 
+    char * garbage = new char[offset-54];
+    file.read(garbage, offset - 54);
     // Получаем количество бит на пиксель
     int bitsPerPixel = *(short*)&header[28];
 
@@ -128,6 +133,7 @@ int main() {
     string rotatedRightFilename = "image90r.bmp";
     ofstream rotatedRightFile(rotatedRightFilename, ios::binary);
     rotatedRightFile.write(header, 54);
+    rotatedRightFile.write(garbage, offset - 54);
     rotatedRightFile.write(rotatedRightImageBuffer.data(), imageSize);
     rotatedRightFile.close();
 
@@ -153,6 +159,7 @@ int main() {
     string rotatedLeftFilename = "image90l.bmp";
     ofstream rotatedLeftFile(rotatedLeftFilename, ios::binary);
     rotatedLeftFile.write(header, 54);
+    rotatedLeftFile.write(garbage, offset - 54);
     rotatedLeftFile.write(rotatedLeftImageBuffer.data(), imageSize);
     rotatedLeftFile.close();
 
@@ -162,6 +169,7 @@ int main() {
 
     ofstream rotatedRightGausFile("image90rGaus.bmp", ios::binary);
     rotatedRightGausFile.write(header, 54);
+    rotatedRightGausFile.write(garbage, offset - 54);
     rotatedRightGausFile.write(rotatedRightImageBuffer.data(), imageSize);
     rotatedRightGausFile.close();
 
